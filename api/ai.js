@@ -20,27 +20,33 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         contents: [
           {
-            parts: [
-              { text: systemPrompt || "" },
-              { text: query },
-            ],
+            parts: [{ text: query }],
           },
         ],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }],
+        },
       }),
     });
 
-    const data = await response.json();
+    const result = await response.json();
 
-    if (!response.ok) {
-      return res.status(500).json({ error: data.error || "API Error" });
+    // استخراج متن پاسخ از Gemini
+    let output = "پاسخی دریافت نشد.";
+    if (
+      result &&
+      result.candidates &&
+      result.candidates[0] &&
+      result.candidates[0].content &&
+      result.candidates[0].content.parts &&
+      result.candidates[0].content.parts[0]
+    ) {
+      output = result.candidates[0].content.parts[0].text;
     }
 
-    const output =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from Gemini";
-
-    return res.status(200).json({ output });
+    res.status(200).json({ output });
   } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+    console.error("Gemini API error:", error);
+    res.status(500).json({ error: "خطا در ارتباط با مدل Gemini" });
   }
 }
