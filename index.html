@@ -351,17 +351,20 @@
         // توجه: این متغیر برای کار در محیط Canvas خالی است.
         // برای استفاده از اپلیکیشن در هاست عمومی (مانند GitHub Pages)، باید کلید API خود را اینجا قرار دهید:
         // مثال: const API_KEY = "YOUR_GEMINI_API_KEY_HERE";
-       fetch("/api/ai", {
+      fetch("/api/ai", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    query: "تحلیل بیت‌کوین رو بهم بده",
-    systemPrompt: "تو یک تحلیل‌گر بازار هستی، پاسخ دقیق بده"
+    query: "تحلیل بیتکوین در یک ماه اخیر",
+    systemPrompt: "تو یک تحلیلگر حرفه ای هستی"
   })
 })
 .then(response => response.json())
 .then(data => {
   console.log("پاسخ Gemini:", data);
+
+  const answer = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  console.log("پاسخ نهایی:", answer);
 })
 .catch(error => {
   console.error("خطا:", error);
@@ -825,4 +828,5 @@
     </script>
 </body>
 </html>
+
 
