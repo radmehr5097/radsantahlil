@@ -5,10 +5,7 @@ export default async function handler(req, res) {
 
   const { query, systemPrompt } = req.body;
 
-  const API_KEY = process.env.GEMINI_API_KEY;
-  const GEMINI_URL =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" +
-    API_KEY;
+  const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY;
 
   try {
     const payload = {
