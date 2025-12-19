@@ -714,42 +714,54 @@
                 return;
             }
 
-            const apiUrl = GEMINI_API_URL + API_KEY;
-            const userQuery = `تحلیل کامل و استراتژیک برای ارز ${query} با توجه به داده‌های لحظه‌ای بازار.`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
+            <script>
+  const apiUrl = "/api/ai";
+  const userQuery = با توجه به دانش فعلی مدل ${query} خطا کامل و تفسیرش برای این مدل :;
 
-            try {
-                const response = await fetchWithRetry(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }, 3);
+  const payload = {
+    query: userQuery,
+    systemPrompt: systemPrompt
+  };
 
-                const result = await response.json();
-                let text = "متاسفانه تحلیل در دسترس نیست.";
-                let sources = [];
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-                if (result.candidates && result.candidates[0]) {
-                     text = result.candidates[0].content.parts[0].text;
-                     const groundingMetadata = result.candidates[0].groundingMetadata;
-                     if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                        sources = groundingMetadata.groundingAttributions
-                            .map(a => ({ uri: a.web?.uri, title: a.web?.title }))
-                            .filter(s => s.uri && s.title);
-                     }
-                } else if (result.error) {
-                    text = `خطای API: ${result.error.message || 'Unknown API Error'}`;
-                }
-                
-                const el = document.getElementById(loadingId);
-                if(el) el.remove();
-                
-                addChatMessage(text, 'ai', false, sources);
+    const result = await response.json();
+
+    let text = "پاسخی دریافت نشد.";
+    if (result.output) {
+      text = result.output;
+    }
+
+    const el = document.getElementById(loadingId);
+    if (el) el.remove();
+
+    addChatMessage(text, 'ai', false, []);
+
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    const el = document.getElementById(loadingId);
+    if (el) el.remove();
+
+    const errorMessage = error && error.message
+      ? (خطا: ${error.message.substring(0, 50)})
+      : '(خطا: بررسی API key)';
+
+    addChatMessage(
+      <div class="p-4 bg-red-900/40 rounded-lg border border-red-500/50">
+        <p class="font-bold text-red-300">بخشی از هوش مصنوعی شکست خورد.</p>
+        <p class="mt-1 text-red-300 text-sm">
+          لطفا اتصال شبکه و کلید API خود را بررسی کنید. RADSAN نمی‌تواند به درستی پاسخ دهد.
+        </p>
+        <span class="text-red-500 block mt-1 dir-ltr">${errorMessage}</span>
+      </div>
+    );
+  }
+</script>
 
             } catch (error) {
                 console.error("RADSAN AI Request Failed. Review Network or API Key:", error);
@@ -828,5 +840,6 @@
     </script>
 </body>
 </html>
+
 
 
