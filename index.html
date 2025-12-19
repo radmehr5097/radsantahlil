@@ -351,8 +351,21 @@
         // توجه: این متغیر برای کار در محیط Canvas خالی است.
         // برای استفاده از اپلیکیشن در هاست عمومی (مانند GitHub Pages)، باید کلید API خود را اینجا قرار دهید:
         // مثال: const API_KEY = "YOUR_GEMINI_API_KEY_HERE";
-        const API_KEY = ""; 
-        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+       fetch("/api/ai", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: "تحلیل بیت‌کوین رو بهم بده",
+    systemPrompt: "تو یک تحلیل‌گر بازار هستی، پاسخ دقیق بده"
+  })
+})
+.then(response => response.json())
+.then(data => {
+  console.log("پاسخ Gemini:", data);
+})
+.catch(error => {
+  console.error("خطا:", error);
+});
 
         const CONFIG = { apiRefreshRate: 15000, defaultSymbol: 'BTCUSD', theme: 'theme-night' };
         let marketData = [];
@@ -812,3 +825,4 @@
     </script>
 </body>
 </html>
+
