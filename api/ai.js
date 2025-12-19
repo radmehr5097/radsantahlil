@@ -5,24 +5,42 @@ export default async function handler(req, res) {
 
   const { query, systemPrompt } = req.body;
 
-  const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1/models/gemini-3-flash:generateContent?key=" +
-  API_KEY;
-  try {
-    const payload = {
-      contents: [{ parts: [{ text: query }]}],
-      systemInstruction: { parts: [{ text: systemPrompt }] }
-    };
+  const API_KEY = process.env.GEMINI_API_KEY;
 
+  const GEMINI_URL =
+    "https://generativelanguage.googleapis.com/v1/models/gemini-3-flash:generateContent?key=" +
+    API_KEY;
+
+  try {
     const response = await fetch(GEMINI_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { text: systemPrompt || "" },
+              { text: query },
+            ],
+          },
+        ],
+      }),
     });
 
     const data = await response.json();
-    res.status(200).json(data);
+
+    if (!response.ok) {
+      return res.status(500).json({ error: data.error || "API Error" });
+    }
+
+    const output =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from Gemini";
+
+    return res.status(200).json({ output });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: "Server error" });
   }
 }
