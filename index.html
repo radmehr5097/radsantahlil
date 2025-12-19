@@ -714,14 +714,13 @@
                 return;
             }
 
-            const apiUrl = GEMINI_API_URL + API_KEY;
+           const apiUrl = "/api/ai";
             const userQuery = `تحلیل کامل و استراتژیک برای ارز ${query} با توجه به داده‌های لحظه‌ای بازار.`;
             
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                tools: [{ "google_search": {} }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
+           const payload = {
+  query: userQuery,
+  systemPrompt: systemPrompt
+};
 
             try {
                 const response = await fetchWithRetry(apiUrl, {
@@ -828,5 +827,6 @@
     </script>
 </body>
 </html>
+
 
 
