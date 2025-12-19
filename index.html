@@ -713,9 +713,12 @@
                 `, 'ai');
                 return;
             }
-
-            <script>
+<script>
   const apiUrl = "/api/ai";
+  const loadingId = "loading";
+  const systemPrompt = "شما یک تحلیلگر هستید.";
+  const query = "خطایی که می‌خوای تحلیل بشه رو اینجا وارد کن"; // می‌تونی اینو با مقدار واقعی جایگزین کنی
+
   const userQuery = با توجه به دانش فعلی مدل ${query} خطا کامل و تفسیرش برای این مدل :;
 
   const payload = {
@@ -762,7 +765,6 @@
     );
   }
 </script>
-
             } catch (error) {
                 console.error("RADSAN AI Request Failed. Review Network or API Key:", error);
                 const el = document.getElementById(loadingId);
@@ -840,6 +842,7 @@
     </script>
 </body>
 </html>
+
 
 
 
